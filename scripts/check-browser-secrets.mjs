@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 const root = 'apps/frontend/dist';
 if (!existsSync(join(root, 'index.html'))) throw new Error('Build the frontend before checking its public bundle.');
-const secrets = ['DATABASE_URL', 'DIRECT_DATABASE_URL', 'SESSION_SECRET', 'POSTGRES_PASSWORD'].map(name => ({ name, value: process.env[name] })).filter(item => item.value && item.value.length >= 6);
+const secrets = ['DATABASE_URL', 'DIRECT_URL', 'DIRECT_DATABASE_URL', 'SESSION_SECRET', 'POSTGRES_PASSWORD'].map(name => ({ name, value: process.env[name] })).filter(item => item.value && item.value.length >= 6);
 const failures = [];
 function scan(directory) {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {

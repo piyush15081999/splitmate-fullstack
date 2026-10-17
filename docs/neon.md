@@ -43,10 +43,12 @@ The six existing SQL files are unchanged. They create tables, indexes, financial
 
 Session hashes, CSRF tokens, users and expirations live in PostgreSQL, not a local file or process-only store. No SESSION_SECRET is required by this implementation. A new Neon database starts with no local accounts or sessions; migration does not upload data. Keep database URLs server-side and never use VITE_ for secrets.
 
-When Render deployment is separately approved, set DATABASE_URL to the pooled Neon URL and DIRECT_URL to the direct URL in private service settings. Production requires HTTPS WEB_ORIGIN, COOKIE_SECURE=true and TRUST_PROXY=1. The existing start:render command runs migrations before starting Express, so do not create/start a service until cloud migration approval has been given. This task does not deploy Render.
+When Render deployment is separately approved, set only the pooled DATABASE_URL in private service settings. DIRECT_URL stays in the separate approved migration workflow. Generation has a connection-free config; npm start and start:render do not migrate. Production requires HTTPS WEB_ORIGIN, COOKIE_SECURE=true and TRUST_PROXY=1. This task does not deploy Render.
 
 The Blueprint currently selects Frankfurt; Neon is in London. These are different regions. Region placement and latency can be revisited at Render deployment; they do not justify recreating the existing Neon project.
 
 ## Current verification limits
 
 Configuration changes require the unit/integration suites and builds to run before a new pass is claimed. The historical 125-test result does not establish this revision's correctness. Consult docs/verification.md and the actual command results. Read-only cloud connectivity and migration status remain pending until private settings are ready. Cloud migration execution and a GitHub push each require separate owner approval.
+
+The owner approved the six cloud migrations on 17 October 2026. They applied successfully with Prisma 7.10.1; status is current, schema drift is absent, both Prisma connections work and no application records were seeded. See deployment.md for the updated service environment.

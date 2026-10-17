@@ -42,7 +42,7 @@ The audit contacts npm's advisory service and changes over time. See [npm audit 
 
 The repository check inspects tracked/unignored candidates and ignore probes without printing matched secret values. It cannot detect every secret, personal detail, image content or historical commit. GitHub private reporting and repository-level protection settings require owner action after creation.
 
-Official CI actions are pinned to commit IDs resolved from their public v4 tags, with contents: read and no deployment job. Dependabot is configured. [GitHub guidance](https://docs.github.com/en/actions/reference/security/secure-use) explains immutable action pinning. GitHub-hosted CI has not been executed yet.
+Official CI actions are pinned to commit IDs resolved from their public v4 tags, with contents: read and no deployment job. Dependabot is configured. [GitHub guidance](https://docs.github.com/en/actions/reference/security/secure-use) explains immutable action pinning. The published baseline main commit has a successful GitHub-hosted CI run; a new local commit requires its own CI result after an approved push.
 
 ## Before internet-facing deployment
 
@@ -51,3 +51,6 @@ Replace Vite with built static serving behind HTTPS, add a suitable CSP/headers,
 ## Prepared Render / Neon profile
 
 The production profile adds same-origin compiled frontend serving, CSP, HSTS, frame restrictions, explicit nearest-hop proxy trust and database-free liveness. Runtime database settings verify remote TLS certificates; the CLI selects an explicit direct migration URL. Sessions remain in PostgreSQL. Local Docker retains its development profile. Tests for production HTTP boundaries, proxy-aware limits, app-instance session continuity and real local HTTPS browser behaviour have been written; see deployment-verification.md for executed results. These controls do not replace a live Render/Neon check, distributed abuse protection, backup testing or a penetration test.
+
+
+Render preparation separates Prisma generation from migration configuration. No direct migration URL is requested by the Blueprint, and npm start/start:render do not execute migrations. The service still uses the configured database role's actual privileges; omitting DIRECT_URL is credential separation, not proof of least-privilege database grants. The bundle scanner checks both direct-variable aliases. API writes remain same-origin/JSON/CSRF protected; no wildcard CORS headers are enabled.

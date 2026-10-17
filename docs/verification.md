@@ -1,4 +1,6 @@
-# Portfolio preparation verification
+# Verification history
+
+**Latest result (17 October 2026):** Render preparation passed lint, all typechecks, both builds, 52 unit + 90 integration + 3 Chromium tests (145 total), browser bundle scan, isolated migrations/status and schema drift. See [current evidence](deployment-verification.md). Earlier pending/blocked entries below are historical and superseded by that report. Render has not been deployed.
 
 ## Verified in this review
 

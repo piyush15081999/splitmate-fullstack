@@ -23,8 +23,8 @@
     "test:e2e": "playwright test",
     "check:repo": "node scripts/check-repository.mjs",
     "start": "npm run start -w @splitmate/backend",
-    "start:render": "npm run db:deploy && npm start",
-    "build:render": "npm run db:generate && npm run build",
+    "start:render": "npm start",
+    "build:render": "npm run db:generate && npm run build && npm run check:bundle",
     "test:production": "playwright test --config playwright.production.config.ts",
     "check:bundle": "node scripts/check-browser-secrets.mjs"
   },

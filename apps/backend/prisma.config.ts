@@ -7,6 +7,6 @@ dotenv.config({ path: fileURLToPath(new URL('../../.env', import.meta.url)) });
 export default defineConfig({
   schema: 'prisma/schema.prisma',
   migrations: { path: 'prisma/migrations' },
-  // Generation/validation do not connect. Migration commands require a real URL.
+  // CLI database operations select the direct URL; generation uses prisma.generate.config.ts.
   datasource: { url: migrationDatabaseUrl(process.env) },
 });

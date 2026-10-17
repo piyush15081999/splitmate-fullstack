@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
           cache-dependency-path: package-lock.json
       - run: node scripts/check-repository.mjs
@@ -45,8 +45,13 @@ jobs:
       - run: npm test
       - run: npm run db:deploy
       - run: npm run test:integration
-      - run: npm run build
-      - run: npm run check:bundle
+      - name: Build Render profile without migration credentials
+        run: npm run build:render
+        env:
+          NODE_ENV: production
+          DATABASE_URL: postgresql://fictional:render_check_only@ep-fictional-pooler.eu-west-2.aws.neon.tech/splitmate_build_only?sslmode=require
+          DIRECT_URL: ""
+          DIRECT_DATABASE_URL: ""
       - run: npm exec -w @splitmate/backend -- prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
       - run: npm exec -- playwright install --with-deps chromium
       - run: npm run test:e2e

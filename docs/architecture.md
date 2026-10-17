@@ -57,3 +57,6 @@ No Phase 6 database change is required: the existing six migrations cover the un
 NODE_ENV=production serves the compiled frontend through Express with CSP, HSTS and frame restrictions. /api remains reserved for JSON responses; extensionless browser GET/HEAD routes receive the SPA shell, while missing assets and API paths do not. /healthz is database-free liveness; /api/health is DB readiness. The server binds to 0.0.0.0 by default in production and honors PORT. Render terminates HTTPS and TRUST_PROXY=1 is explicit. Local Compose remains separate.
 
 Sessions remain PostgreSQL-backed across app instances. Runtime Neon connections use verified TLS and a bounded pg pool; migrations use an explicit direct URL. Pooled Neon omits session SQL timeout assumptions; local/direct connections retain the ten-second SQL limit. See [deployment](deployment.md) for settings, free-tier boundaries and unverified cloud checks.
+
+
+Client generation now uses a separate connection-free Prisma config. Render builds and startup need only the pooled runtime URL. Migration CLI commands retain the explicit direct config and require a separately approved operation. npm start and start:render do not migrate, seed or persist anything to the service filesystem. See deployment.md for exact dashboard values and the liveness/readiness distinction.

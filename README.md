@@ -4,7 +4,7 @@ A full-stack expense-sharing application built with React, TypeScript, Express, 
 
 **Portfolio project · local Docker development · prepared for Render Free + Neon Free · no payment processing.** The green-and-cream interface is original. Local tests are evidence of exercised behaviour, not a production-readiness or security certification.
 
-**Screenshot capture is pending:** the isolated fictional-data journey is written, but Docker must complete verification before images are added.
+Curated screenshots are pending visual/privacy review. The isolated browser journey creates fictional data; no personal ledger is copied into public images.
 
 ## What it does
 
@@ -91,7 +91,7 @@ Passwords use salted scrypt; session cookies are HttpOnly and SameSite=Strict. T
 
 ## Tests and reproducibility
 
-The prior Phase 6 local report recorded **37 unit + 87 integration + 1 Chromium journey = 125 passed tests**, three healthy services, six applied migrations, no schema drift and preserved existing data. That is historical evidence; [current verification](docs/verification.md) records this portfolio revision's actual results and dependency audit. No percentage coverage is claimed.
+Current Render preparation passed **52 unit + 90 integration + 3 Chromium tests = 145 tests**, lint, frontend/backend/tooling typechecks, both builds, a browser-bundle secret scan and isolated migration/drift checks. The production build also passed with no direct URL and an unreachable fictional pooled URL. See [executed verification and remaining live checks](docs/deployment-verification.md). No percentage coverage or live Render success is claimed.
 
 Run the entire suite against a separate temporary PostgreSQL database:
 
@@ -104,15 +104,15 @@ if ($verificationExitCode -ne 0) { throw "Verification failed: $verificationExit
 
 This separate stack never mounts the application volume. Test configuration rejects database names other than splitmate_test. Chromium tests exercise real APIs and persistence. Failure artifacts remain ignored under .local. [Test coverage and gaps](docs/testing.md) and the [manual QA checklist](docs/manual-qa.md) distinguish automated evidence from unexecuted checks.
 
-GitHub Actions is configured for repository-safety checks, lint, all TypeScript checks, unit tests, migrations, PostgreSQL integration tests, both builds, schema drift and Chromium E2E. Actions are pinned to verified commit IDs; workflow permissions are read-only and superseded runs cancel. Remote CI is unverified until the repository is pushed and GitHub runs it.
+GitHub Actions is configured for repository-safety checks, lint, all TypeScript checks, unit tests, migrations, PostgreSQL integration tests, both builds, schema drift and Chromium E2E. Actions are pinned to verified commit IDs; workflow permissions are read-only and superseded runs cancel. The published baseline passed GitHub Actions; this new prepared revision needs its own CI result after an approved push.
 
 ## Screenshots
 
-Capture and visual/privacy review are pending Docker recovery. The [screenshot recipe](docs/screenshots.md) defines the dashboard, ledger, expense form and mobile views; no mock image is presented as a verified application screenshot.
+Curated capture and visual/privacy review are pending. The [screenshot recipe](docs/screenshots.md) defines the dashboard, ledger, expense form and mobile views; no mock image is presented as a verified application screenshot.
 
 ## Limitations
 
-This is a portfolio application. Local Docker keeps Vite development serving; the prepared Render configuration serves built React through Express with production headers. Cloud deployment has not been verified. Local images still contain development tools, startup requires Prisma CLI, and abuse limits remain in memory. HTTPS ingress, CSP/security headers, least-privilege identities, distributed abuse controls, backups/restore testing, monitoring and load testing remain work. There is no MFA, recovery flow, invitation resend/expiry, ownership transfer, real payment processing or currency conversion. Full-ledger analytics are not optimized for large groups. Chromium coverage is not a screen-reader or cross-browser audit.
+This is a portfolio application. Local Docker keeps Vite development serving; the prepared Render configuration serves built React through Express with production headers. Cloud deployment has not been verified. Local images still contain development tools and abuse limits remain in memory. The production profile includes CSP/security headers, but actual cloud HTTPS/proxy behaviour, least-privilege identities, distributed abuse controls, backups/restore testing, monitoring and load testing need operational verification. There is no MFA, recovery flow, invitation resend/expiry, ownership transfer, real payment processing or currency conversion. Full-ledger analytics are not optimized for large groups. Chromium coverage is not a screen-reader or cross-browser audit.
 
 ## Repository guide
 
@@ -120,5 +120,7 @@ This is a portfolio application. Local Docker keeps Vite development serving; th
 - [Architecture](docs/architecture.md), [schema](docs/schema.md), [API](docs/api.md), [financial model](docs/financial-model.md)
 - [Security review](docs/security-review.md), [testing](docs/testing.md), [verification](docs/verification.md)
 - [Manual QA](docs/manual-qa.md), [portfolio publishing checklist](docs/publishing.md)
+
+For one Render Free Node service, use the repository root, Node 22.23.3, build command `npm ci --include=dev --no-audit --no-fund && npm run build:render`, start `npm start`, and health path `/healthz`. Set only the pooled Neon `DATABASE_URL`; the direct URL belongs to the separately approved migration workflow. Generation/build/start do not migrate or seed. See [exact dashboard/environment values](docs/deployment.md). Render has not been created or deployed.
 
 No license has been selected yet. Public visibility does not itself grant an open-source license; choose one before inviting external reuse. Source is published at [piyush15081999/splitmate-fullstack](https://github.com/piyush15081999/splitmate-fullstack).
