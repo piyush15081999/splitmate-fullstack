@@ -54,3 +54,8 @@ The production profile adds same-origin compiled frontend serving, CSP, HSTS, fr
 
 
 Render preparation separates Prisma generation from migration configuration. No direct migration URL is requested by the Blueprint, and npm start/start:render do not execute migrations. The service still uses the configured database role's actual privileges; omitting DIRECT_URL is credential separation, not proof of least-privilege database grants. The bundle scanner checks both direct-variable aliases. API writes remain same-origin/JSON/CSRF protected; no wildcard CORS headers are enabled.
+
+
+## Live portfolio review (17 October 2026)
+
+Anonymous homepage/assets were checked for configured Neon secret values and credential URI patterns with no matches. Anonymous profile/groups/notifications returned 401. Only visually reviewed fictional screenshot fixtures are proposed for publication. These checks are scoped evidence, not a complete privacy or security certification. The owner confirmed Render now uses After CI Checks Pass; main branch protection was subsequently approved, applied and verified, including required validate and administrator enforcement. See ci-cd.md and deployment-verification.md. Production accounts/data were not modified.

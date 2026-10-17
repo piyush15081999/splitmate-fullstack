@@ -1,6 +1,6 @@
 # Verification history
 
-**Latest result (17 October 2026):** Render preparation passed lint, all typechecks, both builds, 52 unit + 90 integration + 3 Chromium tests (145 total), browser bundle scan, isolated migrations/status and schema drift. See [current evidence](deployment-verification.md). Earlier pending/blocked entries below are historical and superseded by that report. Render has not been deployed.
+**Latest result (17 October 2026):** Render preparation passed lint, all typechecks, both builds, 52 unit + 90 integration + 3 Chromium tests (145 total), browser bundle scan, isolated migrations/status and schema drift. See [current evidence](deployment-verification.md). Earlier pending/blocked entries below are historical and superseded by that report. The application is now live at https://splitmate-fullstack.onrender.com; the latest read-only portfolio review and deployment-control status are recorded in deployment-verification.md.
 
 ## Verified in this review
 

@@ -1,15 +1,15 @@
 # Render Free: one Node web service
 
-Preparation only: no Render service has been created. The GitHub repository exists and the separately approved Neon London database has all six migrations, no schema drift, working direct/pooled Prisma connections and no application data. This document is not evidence of a live deployment. See [verification](deployment-verification.md).
+Live demo: https://splitmate-fullstack.onrender.com. The owner reports successful desktop/mobile verification. A read-only review confirmed the homepage and database health. The existing Neon database has six applied migrations; no current application-data count is claimed. Preserve the deployed service/database and do not create duplicates. See [verification](deployment-verification.md).
 
 ## Exact dashboard values
 
-After approval to create resources, choose New > Web Service and connect only this repository. Choose native Node, not Docker or Static Site. Blueprint import is an alternative; do not create both.
+The following values document the existing service and can guide a separately approved fresh deployment. Choose native Node, not Docker or Static Site. Do not import the Blueprint to duplicate the live service.
 
 | Dashboard field | Value |
 | --- | --- |
 | Repository | https://github.com/piyush15081999/splitmate-fullstack |
-| Branch | main, after the prepared commit is approved/pushed and CI passes |
+| Branch | main, with passing CI |
 | Name | splitmate-fullstack |
 | Runtime / language | Node |
 | Region | Frankfurt (frankfurt) |
@@ -18,7 +18,7 @@ After approval to create resources, choose New > Web Service and connect only th
 | Start command | npm start |
 | Instance type | Free |
 | Health check path | /healthz |
-| Auto-deploy | Off; deploy manually after reviewing CI |
+| Auto-deploy | After CI Checks Pass (owner-confirmed) |
 | Pre-deploy command | Leave blank |
 | Persistent disks | None |
 | Publish directory / SPA rewrite | Not applicable: Express serves the assets and routes |
@@ -39,7 +39,7 @@ Render does not currently list London; Frankfurt is the prepared European region
 
 Render assigns PORT; do not set 5173 or 3001. The process listens on process.env.PORT. Do not add DIRECT_URL, DIRECT_DATABASE_URL, SESSION_SECRET, a VITE_ database variable, or local POSTGRES_* settings. Use [the safe checklist](../deploy/render.env.example); never upload local .env or neon.env.
 
-The service URL is not yet assigned. https://splitmate-fullstack.onrender.com is only the expected form, not a verified reservation. If Render assigns a suffix, WEB_ORIGIN must use that exact URL before starting. Never disable Origin checks to compensate for a mismatch.
+The live origin is https://splitmate-fullstack.onrender.com; WEB_ORIGIN must match it exactly. If a future service uses another assigned URL, change WEB_ORIGIN to that URL. Never disable Origin checks to compensate for a mismatch.
 
 ## Build, start and migration boundaries
 
@@ -98,7 +98,7 @@ Invoke-RestMethod "$splitmateOrigin/api/health"
 Invoke-WebRequest -UseBasicParsing "$splitmateOrigin/" | Select-Object StatusCode
 ~~~
 
-Then use the [live checklist](deployment-verification.md): HTTPS/cookies, register/login/logout, invite/accept, expense/edit, settlement/reversal, refresh/deep links, mobile and actual sleep/restart persistence. Use fictional demo accounts only after separately authorizing demo writes. Creating the service triggers an initial build/deploy even with auto-deploy off; resource creation is not authorized by merely approving a GitHub push.
+Then use the [live checklist](deployment-verification.md): HTTPS/cookies, register/login/logout, invite/accept, expense/edit, settlement/reversal, refresh/deep links, mobile and actual sleep/restart persistence. Use fictional demo accounts only after separately authorizing demo writes. Creating a new service triggers an initial deployment; it is not part of this documentation review. The existing service should use the CI gate described in [CI/CD controls](ci-cd.md).
 
 ## Provider references
 

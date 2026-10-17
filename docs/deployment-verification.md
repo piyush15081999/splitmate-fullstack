@@ -1,6 +1,6 @@
 # Render preparation verification
 
-Verified locally on 17 October 2026. No Render service or public application URL has been created. A successful local run is not a live Render certification.
+Live demo: https://splitmate-fullstack.onrender.com. The owner reports successful desktop/mobile use. On 17 October 2026 an anonymous read-only review independently confirmed homepage HTTP 200, CSP present, and /api/health reporting PostgreSQL up. The review did not register accounts or change production records. Historical local preparation evidence follows.
 
 ## Executed current-source checks
 
@@ -35,7 +35,7 @@ Before this preparation, the owner approved all six migrations on Neon. Prisma 7
 
 The source configuration removes migrations from npm start and start:render and removes DIRECT_URL from the Render service environment. Prisma generation has a connection-free config. Tests ran before the final documentation/CI-only updates; compiled application/config source was unchanged afterward.
 
-GitHub CI for baseline main commit 11c82557bd14568a48cbefba0a128e57582f20da previously completed successfully. CI for the new prepared commit remains unexecuted until an approved push. No passing remote result is inferred from local checks.
+GitHub CI for baseline main commit 11c82557bd14568a48cbefba0a128e57582f20da previously completed successfully. The subsequently published Render-preparation commit e6968d13ca4ebe9b8f44be5803fa132ce89c5a4a also completed CI successfully. New uncommitted documentation changes require their own CI after approval and push.
 
 ## Publication and local service checks
 
@@ -56,4 +56,14 @@ GitHub CI for baseline main commit 11c82557bd14568a48cbefba0a128e57582f20da prev
 - [ ] Separately authorized fictional demo activity verifies expense/edit and repayment/reversal persistence.
 - [ ] Free quotas, backup/restore, monitoring, retention and abuse controls have an operational review.
 
-See deployment.md for exact Render dashboard values. Creating the service causes an initial deployment even with auto-deploy off, and has not been authorized in this task.
+See deployment.md for exact Render dashboard values. The service already exists; this review does not create, restart or redeploy it.
+## Live portfolio documentation review
+
+- Homepage HTTP 200 and a CSP header were observed; /api/health returned status ok, database up.
+- Public HTML and both referenced JS/CSS assets were scanned for actual configured Neon URLs/passwords and PostgreSQL credential-URI patterns. No matches were found. This does not establish that every possible secret or private field is absent from all possible responses.
+- Anonymous GET requests to /api/auth/me, /api/groups and /api/notifications each returned 401; no authenticated production data was fetched.
+- Four screenshot PNGs were visually reviewed, traced to fictional fixture accounts and checked for metadata/trailing data. They exactly match the passing isolated test captures. See screenshots.md.
+- Current main commit e6968d1 has successful GitHub Actions. The workflow has an unconditional validate job and no direct deployment hook.
+- Owner confirmed changing Render from On Commit to After CI Checks Pass. The local Blueprint now matches that setting. The authenticated Render setting was not independently queried.
+- GitHub main was initially unprotected. After explicit owner approval, the reviewed policy was applied and read back: required validate from GitHub Actions app 15368, strict updates, PRs and administrator enforcement; force pushes and deletion blocked. See ci-cd.md.
+- This change is documentation, screenshots, an approved repository-policy record and the matching Blueprint auto-deploy setting. No React/API implementation, SQL, dependency, database environment or production financial record was changed. The 145-test runtime result above was not rerun or relabelled as a new test run for these documentation edits.
