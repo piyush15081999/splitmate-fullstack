@@ -1,4 +1,4 @@
-# Preparation only: importing this Blueprint creates a public service and requires owner approval.
+# Existing live service: do not import this Blueprint to create a duplicate.
 services:
   - type: web
     name: splitmate-fullstack
@@ -10,7 +10,7 @@ services:
     buildCommand: npm ci --include=dev --no-audit --no-fund && npm run build:render
     startCommand: npm start
     healthCheckPath: /healthz
-    autoDeployTrigger: "off"
+    autoDeployTrigger: checksPass
     envVars:
       - key: NODE_VERSION
         value: 22.23.3
