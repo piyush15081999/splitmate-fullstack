@@ -1,0 +1,58 @@
+# Dependencies, generated clients and builds
+node_modules/
+apps/backend/src/generated/
+dist/
+coverage/
+# Secrets and machine-specific configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.npmrc
+# Local data, backups and database files
+.local/
+data/
+.data/
+pgdata/
+postgres-data/
+backups/
+dumps/
+*.dump
+*.backup
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+!apps/backend/prisma/migrations/**/migration.sql
+# Reports, screenshots from tests and logs (curated docs screenshots are committed)
+playwright-report/
+test-results/
+blob-report/
+*.log
+*.tsbuildinfo
+# Editor/OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+verification.local.md
+
+.git
+**/node_modules
+**/dist
+**/.env
+**/.env.*
+!**/.env.example
+
+personal-data
+exports
+uploads
+*.csv
+*.xlsx
+*.zip
+*.tar
+*.gz
+*.7z

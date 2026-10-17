@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client"
+  output = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String        @id @default(uuid()) @db.Uuid
+  email       String        @unique @db.VarChar(254)
+  displayName String        @db.VarChar(100)
+  passwordHash String?
+  createdAt   DateTime      @default(now()) @db.Timestamptz(3)
+  memberships GroupMember[]
+  sessions    Session[]
+  createdExpenses Expense[] @relation("ExpenseCreator")
+  recordedSettlements Settlement[] @relation("SettlementCreator")
+  settlementReversals SettlementReversal[]
+  notifications Notification[]
+  sentInvitations GroupInvitation[] @relation("InvitationSender")
+  receivedInvitations GroupInvitation[] @relation("InvitationRecipient")
+}
+
+model Session {
+  tokenHash String @id @db.VarChar(64)
+  csrfToken String @db.VarChar(64)
+  userId String @db.Uuid
+  expiresAt DateTime @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Group {
+  id          String        @id @default(uuid()) @db.Uuid
+  name        String        @db.VarChar(100)
+  currency    String        @default("EUR") @db.VarChar(3)
+  createdAt   DateTime      @default(now()) @db.Timestamptz(3)
+  members     GroupMember[]
+  expenses    Expense[]
+  settlements Settlement[]
+  invitations GroupInvitation[]
+}
+
+model GroupMember {
+  groupId             String       @db.Uuid
+  userId              String       @db.Uuid
+  joinedAt            DateTime     @default(now()) @db.Timestamptz(3)
+  role                String       @default("MEMBER") @db.VarChar(16)
+  group               Group        @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  user                User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  paidExpenses        Expense[]    @relation("ExpensePayer")
+  shares              ExpenseShare[]
+  outgoingSettlements Settlement[] @relation("SettlementSender")
+  incomingSettlements Settlement[] @relation("SettlementRecipient")
+
+  @@id([groupId, userId])
+  @@index([userId])
+}
+
+model Expense {
+  id          String         @id @default(uuid()) @db.Uuid
+  groupId     String         @db.Uuid
+  paidById    String         @db.Uuid
+  description String         @db.VarChar(200)
+  amountMinor Int
+  version Int @default(1)
+  editedAt DateTime? @db.Timestamptz(3)
+  category String @default("OTHER") @db.VarChar(24)
+  splitType String @default("LEGACY") @db.VarChar(16)
+  createdById String? @db.Uuid
+  idempotencyKey String? @db.Uuid
+  requestHash String? @db.VarChar(64)
+  occurredAt  DateTime       @default(now()) @db.Timestamptz(3)
+  createdAt   DateTime       @default(now()) @db.Timestamptz(3)
+  group       Group          @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  paidBy      GroupMember    @relation("ExpensePayer", fields: [groupId, paidById], references: [groupId, userId], onDelete: Restrict)
+  shares      ExpenseShare[]
+  createdBy User? @relation("ExpenseCreator", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@unique([id, groupId])
+  @@unique([createdById, idempotencyKey])
+  @@index([groupId, occurredAt])
+  @@index([groupId, paidById])
+}
+
+model ExpenseShare {
+  expenseId   String      @db.Uuid
+  groupId     String      @db.Uuid
+  userId      String      @db.Uuid
+  amountMinor Int
+  percentageBps Int?
+  expense     Expense     @relation(fields: [expenseId, groupId], references: [id, groupId], onDelete: Restrict)
+  member      GroupMember @relation(fields: [groupId, userId], references: [groupId, userId], onDelete: Restrict)
+
+  @@id([expenseId, userId])
+  @@index([groupId, userId])
+  @@index([expenseId, groupId])
+}
+
+model Settlement {
+  id          String      @id @default(uuid()) @db.Uuid
+  groupId     String      @db.Uuid
+  fromUserId  String      @db.Uuid
+  toUserId    String      @db.Uuid
+  amountMinor Int
+  mode String @default("DIRECT") @db.VarChar(16)
+  createdById String? @db.Uuid
+  idempotencyKey String? @db.Uuid
+  requestHash String? @db.VarChar(64)
+  settledAt   DateTime    @default(now()) @db.Timestamptz(3)
+  createdAt   DateTime    @default(now()) @db.Timestamptz(3)
+  group       Group       @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  from        GroupMember @relation("SettlementSender", fields: [groupId, fromUserId], references: [groupId, userId], onDelete: Restrict)
+  to          GroupMember @relation("SettlementRecipient", fields: [groupId, toUserId], references: [groupId, userId], onDelete: Restrict)
+  createdBy User? @relation("SettlementCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  reversal SettlementReversal?
+
+  @@unique([createdById, idempotencyKey])
+  @@index([groupId, settledAt])
+  @@index([groupId, fromUserId])
+  @@index([groupId, toUserId])
+}
+
+model SettlementReversal {
+  id String @id @default(uuid()) @db.Uuid
+  settlementId String @unique @db.Uuid
+  createdById String @db.Uuid
+  reason String @db.VarChar(300)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  settlement Settlement @relation(fields: [settlementId], references: [id], onDelete: Restrict)
+  createdBy User @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  @@index([createdById])
+}
+
+// UUID references and actor-name snapshots intentionally survive deleted empty groups/accounts.
+// Current GroupMember rows authorize access; these are not live foreign-key relationships.
+model Activity {
+  id String @id @default(uuid()) @db.Uuid
+  groupId String @db.Uuid
+  actorId String @db.Uuid
+  actorName String @db.VarChar(100)
+  action String @db.VarChar(32)
+  referenceId String @db.Uuid
+  referenceType String @db.VarChar(16)
+  eventKey String @unique @db.VarChar(180)
+  data Json
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  notifications Notification[]
+  @@index([groupId, createdAt, id])
+}
+
+model Notification {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  activityId String @db.Uuid
+  readAt DateTime? @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Restrict)
+  @@unique([userId, activityId])
+  @@index([userId, readAt, createdAt])
+}
+
+model GroupInvitation {
+  id String @id @default(uuid()) @db.Uuid
+  groupId String @db.Uuid
+  inviterId String @db.Uuid
+  inviteeId String @db.Uuid
+  status String @default("PENDING") @db.VarChar(16)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  respondedAt DateTime? @db.Timestamptz(3)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  inviter User @relation("InvitationSender", fields: [inviterId], references: [id], onDelete: Restrict)
+  invitee User @relation("InvitationRecipient", fields: [inviteeId], references: [id], onDelete: Restrict)
+  @@unique([groupId, inviteeId])
+  @@index([inviteeId, status])
+}
