@@ -29,3 +29,19 @@ describe('Production runtime configuration', () => {
     expect(databaseSettings(cloud.DIRECT_DATABASE_URL, true).statement_timeout).toBe(10000);
   });
 });
+
+describe('Neon direct URL compatibility and target safety', () => {
+  it('accepts DIRECT_URL while preserving the existing explicit alias', () => {
+    expect(migrationDatabaseUrl({ ...cloud, DIRECT_DATABASE_URL: undefined, DIRECT_URL: cloud.DIRECT_DATABASE_URL })).toBe(cloud.DIRECT_DATABASE_URL);
+    expect(migrationDatabaseUrl({ ...cloud, DIRECT_URL: cloud.DIRECT_DATABASE_URL })).toBe(cloud.DIRECT_DATABASE_URL);
+    expect(migrationDatabaseUrl({ ...local, DIRECT_URL: local.DATABASE_URL })).toBe(local.DATABASE_URL);
+  });
+  it('refuses conflicting direct variables without exposing their values', () => {
+    expect(() => migrationDatabaseUrl({ ...cloud, DIRECT_URL: cloud.DIRECT_DATABASE_URL.replace('/demo?', '/other?') })).toThrow('conflict');
+  });
+  it('refuses mixed local/cloud targets and mismatched Neon databases, endpoints or roles', () => {
+    for (const runtime of [local.DATABASE_URL, cloud.DATABASE_URL.replace('/demo?', '/other?'), cloud.DATABASE_URL.replace('ep-demo-pooler', 'ep-other-pooler'), cloud.DATABASE_URL.replace('fictional:', 'another:')]) {
+      expect(() => migrationDatabaseUrl({ ...cloud, DATABASE_URL: runtime })).toThrow('same endpoint');
+    }
+  });
+});

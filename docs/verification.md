@@ -33,3 +33,13 @@ Publication preparation on 17 October 2026 initialized the application folder on
 - The separate Node 22 Docker verification log still contains only its runtime version; no completed test/build result is available.
 - Current screenshots remain pending. The historical 125-test report is not a pass for this commit.
 - No PostgreSQL reset, cloud deployment or GitHub push was performed.
+
+## Neon preparation on 17 October 2026
+
+- GitHub Actions reports completed/success for published main commit 11c82557bd14568a48cbefba0a128e57582f20da: https://github.com/piyush15081999/splitmate-fullstack/actions/runs/38986845212. This establishes the workflow result for the published baseline, not the new DIRECT_URL changes.
+- Added DIRECT_URL with legacy DIRECT_DATABASE_URL compatibility, conflict rejection and same-target Neon validation. Three regression cases were added; they are not counted as passed until executed.
+- Repository checks passed for 103 candidate files. Both .env and .local/neon.env are ignored. Schema, six migrations and local Compose configuration have no diff from the published baseline.
+- Local frontend and proxied health requests timed out. Docker status/version probes have not returned usable results. Local service operation is not verified for this review.
+- The previous Docker verification exited 125 with an unexpected-EOF infrastructure error. This exit code is not a count of passed tests.
+- Private Neon settings are being prepared by the owner. No cloud connectivity result, migration status or migration application is claimed. The root .env was not edited; no cloud write, seed, Render deployment or GitHub push has been performed in this review.
+- Current host npm test and npm run build were executed and both exited 1 before executing tests/compilation: local Vitest and TypeScript executables are absent. The isolated cached-image configuration test was started; no result has yet been recorded.

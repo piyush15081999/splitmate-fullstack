@@ -17,18 +17,27 @@ export function runtimeConfig(env: Environment) {
   return { production, port, webOrigin, secureCookies, trustProxy: trustProxy as 0 | 1, host: env.HOST ?? (production ? '0.0.0.0' : '127.0.0.1'), databaseUrl: env.DATABASE_URL };
 }
 export function migrationDatabaseUrl(env: Environment) {
-  const connection = env.DIRECT_DATABASE_URL || env.DATABASE_URL;
+  if (env.DIRECT_URL && env.DIRECT_DATABASE_URL && env.DIRECT_URL !== env.DIRECT_DATABASE_URL) throw new Error('DIRECT_URL and DIRECT_DATABASE_URL conflict; set only one direct migration URL.');
+  const direct = env.DIRECT_URL || env.DIRECT_DATABASE_URL;
+  const connection = direct || env.DATABASE_URL;
   if (!connection) {
-    if (env.NODE_ENV === 'production') throw new Error('Production migrations require DIRECT_DATABASE_URL.');
+    if (env.NODE_ENV === 'production') throw new Error('Production migrations require DIRECT_URL (or legacy DIRECT_DATABASE_URL).');
     return 'postgresql://splitmate:splitmate_local_only@localhost:5433/splitmate?schema=public';
   }
   let url: URL;
   try { url = new URL(connection); } catch { throw new Error('Migration database URL is invalid.'); }
   if (!['postgres:', 'postgresql:'].includes(url.protocol)) throw new Error('Migration connection must use PostgreSQL.');
   if (url.hostname.endsWith('.neon.tech')) {
-    if (url.hostname.includes('-pooler.')) throw new Error('Prisma migrations require the direct Neon hostname, not the pooler. Set DIRECT_DATABASE_URL.');
+    if (url.hostname.includes('-pooler.')) throw new Error('Prisma migrations require the direct Neon hostname, not the pooler. Set DIRECT_URL (or legacy DIRECT_DATABASE_URL).');
     if (!['require', 'verify-full', 'verify-ca'].includes(url.searchParams.get('sslmode') ?? '')) throw new Error('Neon migrations require TLS: retain sslmode=require from the console URL.');
   }
-  if (env.NODE_ENV === 'production' && !env.DIRECT_DATABASE_URL) throw new Error('Set DIRECT_DATABASE_URL explicitly for production migrations.');
+  if (env.NODE_ENV === 'production' && !direct) throw new Error('Set DIRECT_URL (or legacy DIRECT_DATABASE_URL) explicitly for production migrations.');
+  if (direct && env.DATABASE_URL) {
+    let runtime: URL;
+    try { runtime = new URL(env.DATABASE_URL); } catch { throw new Error('DATABASE_URL is invalid.'); }
+    if (url.hostname.endsWith('.neon.tech') || runtime.hostname.endsWith('.neon.tech')) {
+      if (!url.hostname.endsWith('.neon.tech') || !runtime.hostname.endsWith('.neon.tech') || runtime.hostname.replace('-pooler.', '.') !== url.hostname || runtime.pathname !== url.pathname || runtime.username !== url.username || runtime.port !== url.port) throw new Error('Neon runtime and migration URLs must target the same endpoint, database and role.');
+    }
+  }
   return connection;
 }

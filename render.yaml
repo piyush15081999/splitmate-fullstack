@@ -24,5 +24,5 @@ services:
         sync: false
       - key: DATABASE_URL
         sync: false
-      - key: DIRECT_DATABASE_URL
+      - key: DIRECT_URL
         sync: false

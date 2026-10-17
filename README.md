@@ -18,6 +18,8 @@ A full-stack expense-sharing application built with React, TypeScript, Express, 
 
 The screenshot journey uses fictional accounts and real records created exclusively in a disposable test database. No personal ledger, password or session token will be copied into public images. See [screenshots and demo recipe](docs/screenshots.md).
 
+For isolated Neon connection preparation, see [Neon setup and approval steps](docs/neon.md). Keep local PostgreSQL unchanged.
+
 For the prepared single-origin HTTPS deployment, see [Render + Neon instructions](docs/deployment.md) and [deployment verification](docs/deployment-verification.md). No cloud deployment is claimed.
 
 ## Run locally — Windows PowerShell
@@ -119,4 +121,4 @@ This is a portfolio application. Local Docker keeps Vite development serving; th
 - [Security review](docs/security-review.md), [testing](docs/testing.md), [verification](docs/verification.md)
 - [Manual QA](docs/manual-qa.md), [portfolio publishing checklist](docs/publishing.md)
 
-No license has been selected yet. Public visibility does not itself grant an open-source license; choose one before inviting external reuse. No repository has been published or pushed by this preparation.
+No license has been selected yet. Public visibility does not itself grant an open-source license; choose one before inviting external reuse. Source is published at [piyush15081999/splitmate-fullstack](https://github.com/piyush15081999/splitmate-fullstack).

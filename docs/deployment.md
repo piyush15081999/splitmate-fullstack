@@ -1,6 +1,6 @@
 # Free Render + Neon deployment
 
-Status: code/configuration prepared; no public repository or cloud resource has been created by this work. No live URL has been tested. See [deployment verification](deployment-verification.md) for actual local results and unexecuted cloud checks.
+Status: the GitHub repository is public. The owner created Neon project splitmate-production in AWS London. Neon connectivity and migrations await private target verification and approval; Render has not been deployed. See [Neon preparation](neon.md). No live application URL has been tested. See [deployment verification](deployment-verification.md) for actual local results and unexecuted cloud checks.
 
 ## Architecture and cost boundaries
 
@@ -63,7 +63,7 @@ Replace YOUR_USERNAME. Configure your own Git author identity if requested. In V
 4. Paste URLs privately into Render's Environment settings at the next stage. Do not paste them into GitHub, README, a VITE_ variable, screenshots or chat.
 5. No seed or fictional record is automatically inserted into the cloud. Once the owner approves demo records, use registered fictional accounts through the deployed UI.
 
-The application retains Prisma 7.10.1 and adapter-pg, using standard PostgreSQL/TLS rather than requiring another paid driver/service. Runtime uses DATABASE_URL. Prisma CLI resolves DIRECT_DATABASE_URL in prisma.config.ts; production CLI commands require it explicitly and reject a Neon pooler hostname. See [Neon's Prisma connection guidance](https://neon.com/docs/guides/prisma).
+The application retains Prisma 7.10.1 and adapter-pg, using standard PostgreSQL/TLS rather than requiring another paid driver/service. Runtime uses DATABASE_URL. Prisma CLI resolves DIRECT_URL in prisma.config.ts; production CLI commands require it explicitly and reject a Neon pooler hostname. See [Neon's Prisma connection guidance](https://neon.com/docs/guides/prisma).
 
 Neon transaction pooling does not retain session SQL settings. For pooled Neon runtime connections, the driver omits the local per-session statement_timeout; Prisma interactive transactions retain their 15-second execution budget and connection acquisition permits 30 seconds for wake-up. A universal SQL execution timeout for pooled standalone reads is not guaranteed. If needed later, configure a dedicated runtime role's server-side timeout separately from the migration role after review. Local/direct connections retain their 10-second statement timeout. These profiles are tested in configuration tests; a real Neon connection still requires live verification.
 
@@ -94,7 +94,7 @@ Enter this checklist from deploy/render.env.example, privately:
 | TRUST_PROXY | 1, Render's nearest ingress only |
 | WEB_ORIGIN | Exact assigned https://...onrender.com origin; no trailing slash |
 | DATABASE_URL | Neon pooled TLS URL |
-| DIRECT_DATABASE_URL | Neon direct TLS URL for the same database |
+| DIRECT_URL | Neon direct TLS URL for the same database |
 | PORT | Supplied by Render; do not hard-code 5173 |
 | SESSION_SECRET | Not used: opaque random session tokens are hashed in PostgreSQL, not signed with a shared secret |
 
